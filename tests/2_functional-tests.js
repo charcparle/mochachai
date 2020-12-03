@@ -64,21 +64,44 @@ suite("Functional Tests", function () {
 });
 
 const Browser = require("zombie");
-
+Browser.site = 'https://mochachai.charlescheng1.repl.co';
+// for local host, use the following line instead - 
+// Browser.localhost('example.com', process.env.PORT || 3000);
+const browser = new Browser();
 suite("e2e Testing with Zombie.js", function () {
-
+  
   suite('"Famous Italian Explorers" form', function () {
     // #5
-    test('submit "surname" : "Colombo" - write your e2e test...', function (done) {
-      browser.fill("surname", "Colombo").pressButton("submit", function () {
-        assert.fail();
+    
+    suiteSetup(function(done) {
+      return browser.visit('/', done);
+      browser.assert.success();
+    });
 
-        done();
-      });
+    test('submit "surname" : "Colombo" - write your e2e test...', function (done) {
+      
+      browser
+        .fill("surname", "Colombo")
+        .then(()=>browser.pressButton("submit", function () {
+          //assert.fail();
+          browser.assert.success();
+          browser.assert.text('span#name','Cristoforo');
+          browser.assert.text('span#surname','Colombo');
+          browser.assert.elements('span#dates',1);
+        }));
+      done();
     });
     // #6
     test('submit "surname" : "Vespucci" - write your e2e test...', function (done) {
-      assert.fail();
+      browser
+        .fill("surname", "Vespucci")
+        .then(()=>browser.pressButton("submit", function () {
+          //assert.fail();
+          browser.assert.success();
+          browser.assert.text('span#name','Amerigo');
+          browser.assert.text('span#surname','Vespucci');
+          browser.assert.elements('span#dates',1);
+        }));
 
       done();
     });
